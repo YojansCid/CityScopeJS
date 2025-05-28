@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Zona de prueba" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-73.05, -36.82],
+            [-73.05, -36.81],
+            [-73.04, -36.81],
+            [-73.04, -36.82],
+            [-73.05, -36.82]
+          ]
+        ]
+      }
+    }
+  ]
+}
