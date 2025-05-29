@@ -34,6 +34,7 @@ export default function Map() {
   const [textualData, setTextualData] = useState(null)
 
   const [geojsonData, setGeojsonData] = useState(null)
+  const [vialidadData, setVialidadData] = useState(null)
 
   const [GEOGRID, setGEOGRID] = useState(null)
   const [ABM, setABM] = useState({})
@@ -76,6 +77,22 @@ export default function Map() {
     setLoaded(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    fetch('/data/VIALIDAD_PROYECTADA.geojson')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setVialidadData(data);
+      })
+      .catch(error => {
+        console.error('Error fetching VIALIDAD_PROYECTADA.geojson:', error);
+      });
+  }, []); // Empty dependency array to run only on mount
 
   useEffect(() => {
     if (!loaded) return
@@ -216,10 +233,26 @@ export default function Map() {
 
   const _renderLayers = () => {
     let layers = []
-    for (var layer of layerOrder) {
-      if (menu.includes(layer)) {
-        layers.push(layersKey[layer])
+    // Keep existing layer logic
+    for (var layerName of layerOrder) { // Changed 'layer' to 'layerName' to avoid conflict
+      if (menu.includes(layerName)) { // Use 'layerName' here
+        layers.push(layersKey[layerName]) // And here
       }
+    }
+
+    // Add the new Vialidad Layer
+    if (vialidadData) {
+      layers.push(
+        GeojsonLayer({ // Assuming GeojsonLayer is a function that returns a layer instance, based on existing layersKey structure
+          id: 'vialidad-layer',
+          data: vialidadData,
+          stroked: true,
+          getLineColor: [255, 0, 0, 200], // RGBA Red
+          getLineWidth: 2,
+          lineWidthMinPixels: 1,
+          pickable: true,
+        })
+      );
     }
     return layers
   }
